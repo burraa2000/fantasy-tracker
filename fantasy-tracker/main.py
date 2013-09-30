@@ -1,5 +1,6 @@
 import ConfigParser
 from yahoo_oauth_handler import YahooHandler
+import json
 
 if __name__ =='__main__':
     print "Starting your server"
@@ -7,4 +8,9 @@ if __name__ =='__main__':
     config_parser.read("init.cfg")
     
     authHandlerYahoo=YahooHandler(config_parser)
+    
+    print "Getting your league info:"
+    jsonResponse=authHandlerYahoo.get_user_leagues('nfl')
+    
+    print json.dumps(jsonResponse, indent=1)
     
