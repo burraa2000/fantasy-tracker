@@ -28,7 +28,6 @@ class YahooHandler(object):
         '''
         self._service=self.createService(config_parser)
         request_token, request_token_secret = self._service.get_request_token(data = { 'oauth_callback': "oob" })
-        print request_token, request_token_secret
         auth_url=self._service.get_authorize_url(request_token)
         webbrowser.open(auth_url)
         oauth_verifier=raw_input("Enter verifier code from the website:")
