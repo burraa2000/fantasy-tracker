@@ -41,7 +41,7 @@ class YahooHandler(object):
                                    params={'format':'json'})
         jsonresponse=response.json()
         if 'error' in jsonresponse.keys():
-            raise RequestFail('fail!')
+            raise RequestFail('bad request:'+ request_url)
         return jsonresponse
     
     def createService(self,config_parser):
@@ -61,13 +61,14 @@ class YahooHandler(object):
         request_url=''.join([self.BASE_URL,'users;use_login=1/games;game_keys=',game_code,'/leagues'])
         jsonResponse=self.make_request(request_url)
         games=jsonResponse['fantasy_content']['users']['0']['user'][1]['games']
+        list_leagues=[]
         for i in range(0,int(games['count'])):
             game = games[str(i)]['game']
-            game_key = game[0]['game_key']
-            game_id = game[0]['game_id']
+#             game_key = game[0]['game_key']
+#             game_id = game[0]['game_id']
             leagues=game[1]['leagues']
             for i in range(0,int(leagues['count'])):
                 league_name=leagues[str(i)]['league'][0]['name']
                 league_id=leagues[str(i)]['league'][0]['league_id']
-                print league_name, league_id
-            
+                list_leagues.append((league_id,league_name))
+        return list_leagues

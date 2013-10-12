@@ -8,10 +8,9 @@ if __name__ =='__main__':
     config_parser.read("init.cfg")
     
     authHandlerYahoo=YahooHandler(config_parser)
-    
     print "Getting your league info:"
-    jsonResponse=authHandlerYahoo.get_user_leagues('nfl')
-    
+    leagues=authHandlerYahoo.get_user_leagues('nfl')
+    print leagues
 
     
     
