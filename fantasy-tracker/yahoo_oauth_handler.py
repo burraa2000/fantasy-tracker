@@ -8,6 +8,10 @@ import constants
 from rauth import OAuth1Service
 import webbrowser
 
+class RequestFail(Exception):
+    pass
+
+
 class YahooHandler(object):
     '''
     classdocs
@@ -35,7 +39,10 @@ class YahooHandler(object):
     def make_request(self,request_url):
         response=self._session.get(request_url,
                                    params={'format':'json'})
-        return response.json()
+        jsonresponse=response.json()
+        if 'error' in jsonresponse.keys():
+            raise RequestFail('fail!')
+        return jsonresponse
     
     def createService(self,config_parser):
         return OAuth1Service(consumer_key=config_parser.get('YahooAuth', 'CONSUMER_KEY'),
@@ -52,4 +59,15 @@ class YahooHandler(object):
         
     def get_user_leagues(self,game_code):
         request_url=''.join([self.BASE_URL,'users;use_login=1/games;game_keys=',game_code,'/leagues'])
-        return self.make_request(request_url)
+        jsonResponse=self.make_request(request_url)
+        games=jsonResponse['fantasy_content']['users']['0']['user'][1]['games']
+        for i in range(0,int(games['count'])):
+            game = games[str(i)]['game']
+            game_key = game[0]['game_key']
+            game_id = game[0]['game_id']
+            leagues=game[1]['leagues']
+            for i in range(0,int(leagues['count'])):
+                league_name=leagues[str(i)]['league'][0]['name']
+                league_id=leagues[str(i)]['league'][0]['league_id']
+                print league_name, league_id
+            
