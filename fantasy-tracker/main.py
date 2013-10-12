@@ -1,6 +1,5 @@
 import ConfigParser
 from yahoo_oauth_handler import YahooHandler
-import json
 
 if __name__ =='__main__':
     print "Starting your server"
