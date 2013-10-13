@@ -10,13 +10,14 @@ def initialize():
     config_parser=ConfigParser.ConfigParser()
     config_parser.read("init.cfg")
     authHandlerYahoo=YahooHandler(config_parser)
+    
     print "Getting your league info:"
     leagues=authHandlerYahoo.get_user_leagues('nfl')
-    print leagues
+    return leagues
     
-@app.route('/login_handler')
+@app.route('/test')
 def handle_login():
-    pass
+    return 'hi'
     
     
 
