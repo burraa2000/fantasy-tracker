@@ -19,8 +19,6 @@ def handle_login():
     authHandlerYahoo.authorize_and_return_session(request.args['oauth_verifier'])
     return 'success!!!'
 
-
-
 if __name__ =='__main__':
     config_parser=ConfigParser.ConfigParser()
     config_parser.read("init.cfg")
