@@ -22,16 +22,13 @@ class YahooHandler(object):
 #     BASE_URL = 'https://api.login.yahoo.com/oauth/v2/'
     BASE_URL = 'http://fantasysports.yahooapis.com/fantasy/v2/'
 
-    def __init__(self, config_parser):
+    def __init__(self, config_parser, callback='oob'):
         '''
         Constructor
         '''
         self._service = self.createService(config_parser)
-        request_token, request_token_secret = self._service.get_request_token(data={ 'oauth_callback': "oob" })
-        auth_url = self._service.get_authorize_url(request_token)
-        oauth_verifier = raw_input("Enter verifier code from the website:")
-        self._session = self._service.get_auth_session(request_token, request_token_secret, data={'oauth_verifier':oauth_verifier})
-        self.persist()
+        self.request_token, self.request_token_secret = self._service.get_request_token(data={ 'oauth_callback': "http://127.0.0.1:5000/handle_login" })
+        self.auth_url = self._service.get_authorize_url(self.request_token)
         print "Session Created successfully."
         
     def make_request(self, request_url):
@@ -54,7 +51,11 @@ class YahooHandler(object):
         
     def persist(self):
         print "Attempting to persist."
-        
+    
+    def authorize_and_return_session(self, verifier):
+        self._session = self._service.get_auth_session(self.request_token, self.request_token_secret, data={'oauth_verifier':verifier})
+        return self._session
+    
     def get_user_leagues(self, game_code):
         request_url = ''.join([self.BASE_URL, 'users;use_login=1/games;game_keys=', game_code, '/leagues'])
         jsonResponse = self.make_request(request_url)
