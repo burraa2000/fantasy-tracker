@@ -6,7 +6,6 @@ Created on Sep 29, 2013
 
 import constants
 from rauth import OAuth1Service
-import webbrowser
 
 class RequestFail(Exception):
     pass
