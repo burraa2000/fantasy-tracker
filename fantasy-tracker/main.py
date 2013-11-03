@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, request
+from flask import Flask, redirect, url_for, request, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 import ConfigParser
 import yahoo_oauth_handler
@@ -31,13 +31,18 @@ class League(db.Model):
         self.game, self.username= game, username
 
 
+############ END DB STUFF
+
 @app.route('/')
 def initialize():
-    # if user cookie is valid then redirect to homepage.
-    # else redirect to yahoo login when click link "login to yahoo"
-    print "Starting your server"
-    return redirect(authHandlerYahoo.auth_url) 
+    return render_template('homepage.html')
    
+@app.route('/login')
+def login():
+    user_id=request.cookies.get('user_id')
+    return redirect(authHandlerYahoo.auth_url) 
+
+
 @app.route('/handle_login')
 def handle_login():
     # redirect to homepage if login is successful
@@ -45,15 +50,18 @@ def handle_login():
     user=User(None, session.access_token, session.access_token_secret)
     db.session.add(user)
     db.session.commit()
-    leagues = authHandlerYahoo.get_user_leagues('nfl')
-    return str(leagues)
+    return redirect(url_for('homepage'))
 
 @app.route('/home')
 def homepage():
+    leagues= authHandlerYahoo.get_user_leagues('nfl')
+    for i in leagues:
+        pass
+    
     # List your teams
     # Add teams for tracking to database
     #
-    pass
+    return str(leagues)
 
 
 if __name__ == '__main__':
