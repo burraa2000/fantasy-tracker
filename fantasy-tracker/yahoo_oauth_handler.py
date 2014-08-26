@@ -15,7 +15,7 @@ class YahooHandler(object):
     '''
     classdocs
     '''
-    REQUEST_TOKEN_URL = "https://api.login.yahoo.com/oauth/v2/get_request_token"
+    REQUEST_TOKEN_URL = "https://api.login.yahoo.com/oauth/v2/get_request_token/"
     AUTHORIZE_URL = 'https://api.login.yahoo.com/oauth/v2/request_auth'
     ACCESS_TOKEN_URL = 'https://api.login.yahoo.com/oauth/v2/get_token'
 #     BASE_URL = 'https://api.login.yahoo.com/oauth/v2/'
@@ -26,6 +26,9 @@ class YahooHandler(object):
         Constructor
         '''
         self._service = self.createService(config_parser)
+        print self._service.consumer_key
+        print self._service.consumer_secret
+#         self.request_token, self.request_token_secret = self._service.get_request_token(data={ 'oauth_callback': "http://127.0.0.1:5000/handle_login" })
         self.request_token, self.request_token_secret = self._service.get_request_token(data={ 'oauth_callback': "http://127.0.0.1:5000/handle_login" })
         self.auth_url = self._service.get_authorize_url(self.request_token)
         print "Session Created successfully."
@@ -45,7 +48,7 @@ class YahooHandler(object):
                       access_token_url=self.ACCESS_TOKEN_URL,
                       authorize_url=self.AUTHORIZE_URL,
                       request_token_url=self.REQUEST_TOKEN_URL,
-                      base_url=self.BASE_URL,
+                      base_url=self.BASE_URL
                     )
         
     def persist(self):
@@ -55,6 +58,10 @@ class YahooHandler(object):
         self._session = self._service.get_auth_session(self.request_token, self.request_token_secret, data={'oauth_verifier':verifier})
         return self._session
     
+    
+    
+    
+    ## Get leagues that you are in
     def get_user_leagues(self, game_code):
         request_url = ''.join([self.BASE_URL, 'users;use_login=1/games;game_keys=', game_code, '/leagues'])
         jsonResponse = self.make_request(request_url)
@@ -68,3 +75,6 @@ class YahooHandler(object):
                 league_id = leagues[str(i)]['league'][0]['league_id']
                 list_leagues.append((league_id, league_name))
         return list_leagues
+
+
+    ## Get players that you own.
