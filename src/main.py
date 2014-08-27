@@ -40,9 +40,9 @@ class League(db.Model):
 def initialize():
     return render_template('homepage.html')
    
-@app.route('/register')
+@app.route('/register', methods=['GET','POST'])
 def register():
-    pass
+    return render_template('register.html')
 
 
 @app.route('/login')

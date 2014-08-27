@@ -15,14 +15,30 @@
 				</div>
 			</div>
 			<div class="inner cover">
-				<h1 class="cover-heading">Cover your page.</h1>
-				<p class="lead">Cover is a one-page template for building simple
-					and beautiful home pages. Download, edit the text, and add your own
-					fullscreen background photo to make it your own.</p>
-				<p class="lead">
-					<a href="{{ url_for('login') }}" class="btn btn-primary btn-large">
-						Login to Yahoo!</a>
+				<h1 class="cover-heading">Fantasy Front Office</h1>
+				<p class="lead">Track all your teams here! Lorem Ipsum</p>
+				<p class="container">
+					<div class="form-group">
+					<form class="form-signin" role="form">
+						<h2 class="form-signin-heading">Please sign in</h2>
+						<input type="email" class="form-control"
+							placeholder="Email address" required autofocus> <input
+							type="password" class="form-control" placeholder="Password"
+							required>
+						<div class="checkbox">
+							<label> <input type="checkbox" value="remember-me">
+								Remember me
+							</label>
+						</div>
+						<button class="btn btn-lg btn-primary" type="submit">Sign
+							in</button>
+					</form>
+					</div>
+
 				</p>
+				<p>
+				<a href="{{ url_for('register') }}"
+					class="btn btn-primary btn-large"> Register Now!</a></p>
 			</div>
 		</div>
 	</div>
@@ -30,7 +46,8 @@
 
 
 {% endblock %} {% block head %}
-<link href="cover.css" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/cover.css') }}"
+	rel="stylesheet">
 
 <link href="{{ url_for('static', filename='css/bootstrap.css') }}"
 	rel="stylesheet">
