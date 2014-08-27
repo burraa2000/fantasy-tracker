@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for, request, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.login import LoginManager
 import ConfigParser
 import yahoo_oauth_handler
 
@@ -37,8 +38,13 @@ class League(db.Model):
 def initialize():
     return render_template('homepage.html')
    
+@app.route('/register')
+def register():
+    pass
+
+
 @app.route('/login')
-def login():
+def login2():
     user_id=request.cookies.get('user_id')
     return redirect(authHandlerYahoo.auth_url) 
 
