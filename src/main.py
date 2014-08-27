@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from flask import Flask, redirect, url_for, request, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
@@ -44,7 +46,7 @@ def register():
 
 
 @app.route('/login')
-def login2():
+def login():
     user_id=request.cookies.get('user_id')
     return redirect(authHandlerYahoo.auth_url) 
 
