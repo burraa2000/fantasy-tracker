@@ -1,27 +1,24 @@
 #!/usr/bin/python
 
-from flask import Flask, redirect, url_for, request, render_template
+from flask import Flask, redirect, url_for, request, render_template, session
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.login import LoginManager
 import ConfigParser
 import yahoo_oauth_handler
 
 app = Flask(__name__)
+app.secret_key='not_so_secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
-
 
 
 class User(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     username=db.Column(db.String(80), unique=True)
-    access_token=db.Column(db.String(40))
-    access_token_secret=db.Column(db.String(40))
+    password=db.Column(db.String(40))
     
-    def __init__(self, username, access_token, access_token_secret):
+    def __init__(self, username, password):
         self.username=username
-        self.access_token,self.access_token_secret=access_token, access_token_secret
-    
+        self.password=password
     def __repr__(self):
         return '<User %r>' % self.username
     
@@ -42,7 +39,14 @@ def initialize():
    
 @app.route('/register', methods=['GET','POST'])
 def register():
-    return render_template('register.html')
+    if request.method =='POST':
+        user=User(request.form['email'], request.form['password'])
+        db.session.add(user)
+        session['name']=request.form['email']
+        db.session.commit()
+        return redirect(url_for('homepage'))
+    else:
+        return render_template('register.html')
 
 
 @app.route('/login')
@@ -53,7 +57,6 @@ def login():
 
 @app.route('/handle_login')
 def handle_login():
-    # redirect to homepage if login is successful
     session = authHandlerYahoo.authorize_and_return_session(request.args['oauth_verifier'])
     user=User(None, session.access_token, session.access_token_secret)
     db.session.add(user)
@@ -62,13 +65,14 @@ def handle_login():
 
 @app.route('/home')
 def homepage():
+    return session['name']
+    
+    
+    
+def leagues():
     leagues= authHandlerYahoo.get_user_leagues('nfl')
     for i in leagues:
         pass
-    
-    # List your teams
-    # Add teams for tracking to database
-    #
     return str(leagues)
 
 
