@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="container">
+	<h1>Welcome {{ login }}, here are your leagues!</h1>
+	
+	<p><a href="/auth_yahoo">Register a Yahoo! account</a>
+	
+</div>
+
+{% endblock %}
+
+{% block head %}
+<link href="{{ url_for('static', filename='css/bootstrap.css') }}"
+	rel="stylesheet">
+<link href="{{ url_for('static', filename='css/bootstrap-theme.css') }}"
+	rel="stylesheet">
+{% endblock %}

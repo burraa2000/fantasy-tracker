@@ -3,7 +3,8 @@
 from flask import Flask, redirect, url_for, request, render_template, session
 from flask.ext.sqlalchemy import SQLAlchemy
 import ConfigParser
-import yahoo_oauth_handler
+from yahoo_oauth_handler import YahooHandler
+import constants
 
 app = Flask(__name__)
 app.secret_key='not_so_secret'
@@ -15,12 +16,20 @@ class User(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     username=db.Column(db.String(80), unique=True)
     password=db.Column(db.String(40))
+    credentials=db.relationship('Credential', backref='user', lazy='dynamic')
     
     def __init__(self, username, password):
         self.username=username
         self.password=password
     def __repr__(self):
         return '<User %r>' % self.username
+
+class Credential(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    user_id=db.Column(db.Integer, db.ForeignKey('user.id'))
+    site=db.Column(db.String(40))
+    token_secret=db.Column(db.String(80))
+    
     
 class League(db.Model):
     id=db.Column(db.Integer, primary_key=True)
@@ -41,31 +50,42 @@ def initialize():
 def register():
     if request.method =='POST':
         user=User(request.form['email'], request.form['password'])
-        db.session.add(user)
         session['name']=request.form['email']
-        db.session.commit()
-        return redirect(url_for('homepage'))
+        try:
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for('homepage'))
+        except:
+            return render_template('register.html', error=True)
     else:
         return render_template('register.html')
 
+@app.route('/auth_yahoo')
+def auth_yahoo():
+    y_handler= YahooHandler(config_parser)
+    return redirect(y_handler.auth_url)
+    
 
-@app.route('/login')
+@app.route('/login', methods=['GET','POST'])
 def login():
-    user_id=request.cookies.get('user_id')
-    return redirect(authHandlerYahoo.auth_url) 
-
+    print request.method
+    if request.method == 'POST':
+        user=User.query.filter_by(username=request.form['email']).first()
+        if(user != None):
+            return redirect(url_for('homepage'))
+    return render_template('login.html')
 
 @app.route('/handle_login')
 def handle_login():
     session = authHandlerYahoo.authorize_and_return_session(request.args['oauth_verifier'])
-    user=User(None, session.access_token, session.access_token_secret)
-    db.session.add(user)
-    db.session.commit()
+    user=User.query.filter_by(username=session['name']).first()
+    user.credentials.add(Credential(constants.YAHOO, session.client_secret))
+    db.commit()
     return redirect(url_for('homepage'))
 
 @app.route('/home')
 def homepage():
-    return session['name']
+    return render_template('index.html', login=session['name'])
     
     
     
@@ -79,7 +99,7 @@ def leagues():
 if __name__ == '__main__':
     config_parser = ConfigParser.ConfigParser()
     config_parser.read("init.cfg")
-    authHandlerYahoo = yahoo_oauth_handler.YahooHandler(config_parser)
+    authHandlerYahoo = YahooHandler(config_parser)
     app.run(debug=True)
 
 

@@ -3,7 +3,7 @@
 
 	<div class="site-wrapper-inner">
 
-		<div class="cover-container">
+		<div class="container cover-container">
 			<div class="masthead clearfix">
 				<div class="inner">
 					<h3 class="masthead-brand">Cover</h3>
@@ -17,14 +17,14 @@
 			<div class="inner cover">
 				<h1 class="cover-heading">Fantasy Front Office</h1>
 				<p class="lead">Track all your teams here! Lorem Ipsum</p>
-				<p class="container">
-					<div class="form-group">
+				<div class="container" width="90px">
+				<div class="form-group">
 					<form method="post" class="form-signin" role="form" action="/login">
 						<h2 class="form-signin-heading">Please sign in</h2>
 						<input type="email" name="email" class="form-control"
-							placeholder="Email address" required autofocus> 
-						<input name="password" type="password" class="form-control" placeholder="Password"
-							required>
+							placeholder="Email address" required autofocus> <input
+							name="password" type="password" class="form-control"
+							placeholder="Password" required>
 						<div class="checkbox">
 							<label> <input type="checkbox" value="remember-me">
 								Remember me
@@ -33,12 +33,14 @@
 						<button class="btn btn-lg btn-primary" type="submit">Sign
 							in</button>
 					</form>
-					</div>
 
-				</p>
-				<p>
-				<a href="{{ url_for('register') }}"
-					class="btn btn-primary btn-large"> Register Now!</a></p>
+					<p>
+						<a href="{{ url_for('register') }}"
+							class="btn btn-primary btn-large"> Register Now!</a>
+					</p>
+				</div>
+
+				</div>
 			</div>
 		</div>
 	</div>
@@ -48,10 +50,11 @@
 {% endblock %} {% block head %}
 <link href="{{ url_for('static', filename='css/cover.css') }}"
 	rel="stylesheet">
-
 <link href="{{ url_for('static', filename='css/bootstrap.css') }}"
 	rel="stylesheet">
 <link href="{{ url_for('static', filename='css/bootstrap-theme.css') }}"
+	rel="stylesheet">
+<link href="{{ url_for('static', filename='css/signin.css') }}"
 	rel="stylesheet">
 
 
