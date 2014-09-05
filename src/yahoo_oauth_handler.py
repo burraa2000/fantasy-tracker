@@ -55,6 +55,7 @@ class YahooHandler(object):
         print "Attempting to persist."
     
     def authorize_and_return_session(self, verifier):
+        print self.request_token, self.request_token_secret
         self._session = self._service.get_auth_session(self.request_token, self.request_token_secret, data={'oauth_verifier':verifier})
         return self._session
     

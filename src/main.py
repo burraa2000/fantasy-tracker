@@ -67,8 +67,7 @@ def register():
 
 @app.route('/auth_yahoo')
 def auth_yahoo():
-    y_handler= YahooHandler(config_parser)
-    return redirect(y_handler.auth_url)
+    return redirect(authHandlerYahoo.auth_url)
     
 
 @app.route('/login', methods=['GET','POST'])
@@ -84,19 +83,18 @@ def login():
 
 @app.route('/handle_login')
 def handle_login():
-    session = authHandlerYahoo.authorize_and_return_session(request.args['oauth_verifier'])
+    y_session = authHandlerYahoo.authorize_and_return_session(request.args['oauth_verifier'])
     user=User.query.filter_by(username=session['name']).first()
-    user.credentials.add(Credential(constants.YAHOO, session.client_secret))
-    print session.client_secret
+    credential= Credential(constants.YAHOO, y_session.access_token)
+    user.credentials.append(credential)
+    db.session.add(credential)
     db.session.add(user)
     db.session.commit()
-    return redirect(url_for('homepage'))
+    return leagues()
 
 @app.route('/home')
 def homepage():
     return render_template('index.html', login=session['name'])
-    
-    
     
 def leagues():
     leagues= authHandlerYahoo.get_user_leagues('nfl')
